@@ -35,3 +35,39 @@ ggsave('priceHistogram.png')
 
 ##### 2. Price by Cut Histograms
 
+qplot(x = price, data = diamonds) + facet_wrap(~cut)
+by(diamonds$price, diamonds$cut, summary)
+
+
+# add a parameter to facet_wrap for non-fixed y-axis in the histograms (y-axis to be different for each histogram).
+qplot(x = price, data = diamonds) + facet_wrap(~cut, scales = "free")
+
+##### 3. Price per Carat by Cut
+# Create a histogram of price per carat
+# and facet it by cut. You can make adjustments
+# to the code from the previous exercise to get
+# started.
+
+# Adjust the bin width and transform the scale
+# of the x-axis using log10.
+
+qplot(x = price/carat, data = diamonds, binwidth = 0.03) +
+  scale_x_log10() + facet_wrap(~cut)
+# Result: normal-ish distributions and slightly bimodal distribution for Very Good cuts
+
+##### 4. Price by color Box Plots
+
+by(diamonds$price, diamonds$color, summary)
+qplot(x = color, y = price/carat, 
+      data = diamonds, geom = 'boxplot')
+ggsave('PricePerCaratBoxPlots.png')
+
+# check the IQR
+IQR(subset(diamonds, color == 'D')$price)
+
+##### 5. Carat Frequency Polygon
+qplot(x = carat, data = diamonds, binwidth = 0.1, geom = 'freqpoly') +
+  scale_x_continuous(limits = c(0, 3), breaks = seq(0, 3, 0.1))
+
+table(diamonds$carat)
+
