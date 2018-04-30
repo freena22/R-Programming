@@ -1,5 +1,6 @@
 ##### Read in Data
 
+library(ggplot2)
 data(diamonds)
 
 str(diamonds)
@@ -7,6 +8,7 @@ str(diamonds)
 summary(diamonds)
 # Best color : D
 
+## Part I: One Varaible
 
 ##### 1. Price Histogram
 
@@ -70,4 +72,27 @@ qplot(x = carat, data = diamonds, binwidth = 0.1, geom = 'freqpoly') +
   scale_x_continuous(limits = c(0, 3), breaks = seq(0, 3, 0.1))
 
 table(diamonds$carat)
+
+## Part II: Two Varaibles
+
+##### 1. Scatterplot of price vs x.
+
+library(ggplot2)
+ggplot(aes(x = price, y = x), data = diamonds) +
+  geom_point()
+
+cor.test(diamonds$price, diamonds$x)
+cor.test(diamonds$price, diamonds$y)
+cor.test(diamonds$price, diamonds$z)
+
+##### 2. Scatterplot of price vs depth
+ggplot(aes(x = depth, y = price), data = diamonds) +
+  geom_point(alpha = 1/100)
+
+
+# Change the code to make the transparency of the
+# points to be 1/100 of what they are now and mark
+# the x-axis every 2 units.
+
+
 
