@@ -112,7 +112,8 @@ ggplot(aes(x = price, y = volume), data = diamonds) +
   geom_point() +
   ylim(0,500)  
 
-# What's the correlation of price and volume? 
+# The correlation of price and volume
+
 # Exclude diamonds that have a volume of 0 or that are greater than or equal to 800
 library(dplyr)
 with(subset(diamonds, volume != 0 & volume < 800), cor.test(price, volume))
@@ -120,9 +121,48 @@ with(subset(diamonds, volume != 0 & volume < 800), cor.test(price, volume))
 # Subset the data to exclude diamonds with a volume greater than or equal to 800 and equal to 0. 
 # Adjust the transparency of thevpoints and add a linear model to the plot.
 
-
 ggplot(aes(x = price, y = volume), 
              data = subset(diamonds, volume < 800 & volume != 0)) +
-  geom_line(alpha = 1/5, position = position_jitter(h = 0)) +
+  geom_line(alpha = 1/3, position = position_jitter(h = 0)) +
   geom_smooth(method = "lm") 
+
+##### 5. Create a new data frame diamondsByClarity
+suppressMessages(library(ggplot2))
+suppressMessages(library(dplyr))
+data(diamonds)
+
+clarity_groups <- group_by(diamonds, clarity)
+
+diamonds.diamondsByClarity <- summarise(clarity_groups,
+                                        mean_price = mean(price),
+                                        median_price = median(as.numeric(price)),
+                                        min_price = min(price),
+                                        max_price = max(price),
+                                        n = n())
+head(diamonds.diamondsByClarity, 20)
+
+##### 6. Create summary data frames with the mean price by clarity and color
+#####    And create two bar plots on one output image
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, 
+                                    mean_price = mean(price))
+head(diamonds_mp_by_clarity)
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color,
+                                  mean_price = mean(price))
+head(diamonds_mp_by_color)
+
+
+p1 <- barplot(diamonds_mp_by_clarity$mean_price, 
+              names.arg = diamonds_mp_by_clarity$clarity, 
+              horiz = TRUE, border = NA, main = 'Diamond Price vs. Clarity')
+
+p2 <- barplot(diamonds_mp_by_color$mean_price, 
+              names.arg = diamonds_mp_by_color$color,
+              horiz = TRUE, border = NA, main = 'Diamond Price vs. Color')
+
+library(gridExtra)
+grid.arrange(p1, p2, ncol = 1)
+
 
