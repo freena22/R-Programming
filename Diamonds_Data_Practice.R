@@ -86,13 +86,43 @@ cor.test(diamonds$price, diamonds$y)
 cor.test(diamonds$price, diamonds$z)
 
 ##### 2. Scatterplot of price vs depth
-ggplot(aes(x = depth, y = price), data = diamonds) +
+
+# Change the code to make the transparency of the points to be 1/100 
+ggplot(aes(x = price, y = depth), data = diamonds) +
   geom_point(alpha = 1/100)
 
+cor.test(diamonds$price, diamonds$depth)
 
-# Change the code to make the transparency of the
-# points to be 1/100 of what they are now and mark
-# the x-axis every 2 units.
+##### 3. Scatterplot of price vc carat
+
+#  omit the top 1% of price and carat values.
+
+ggplot(aes(x = price, y = carat), data = diamonds) +
+  geom_point() + 
+  xlim(0, quantile(diamonds$price, 0.90))
+
+##### 4. Scatterplot of price vs. volume (x * y * z)
+
+# This is a very rough approximation for a diamond's volume.
+# Create a new variable for volume in the diamonds data frame.
+diamonds$volume <- diamonds$x * diamonds$y * diamonds$z
+head(diamonds$volume)
+
+ggplot(aes(x = price, y = volume), data = diamonds) +
+  geom_point() +
+  ylim(0,500)  
+
+# What's the correlation of price and volume? 
+# Exclude diamonds that have a volume of 0 or that are greater than or equal to 800
+library(dplyr)
+with(subset(diamonds, volume != 0 & volume < 800), cor.test(price, volume))
+
+# Subset the data to exclude diamonds with a volume greater than or equal to 800 and equal to 0. 
+# Adjust the transparency of thevpoints and add a linear model to the plot.
 
 
+ggplot(aes(x = price, y = volume), 
+             data = subset(diamonds, volume < 800 & volume != 0)) +
+  geom_line(alpha = 1/5, position = position_jitter(h = 0)) +
+  geom_smooth(method = "lm") 
 
