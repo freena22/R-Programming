@@ -19,7 +19,14 @@ ggplot(aes(x = age, y = friend_count),
        data = subset(pf, !is.na(gender))) + 
   geom_line(aes(color = gender), stat = 'summary', fun.y = median)
 
+```
 
+***
+
+### Plotting Conditional Summaries
+- the codes different but the plot is the same result
+
+```{r Plotting Conditional Summaries}
 # Create a new data frame ('pf.fc_by_age_gender'), that contains
 # information on each age AND gender group.
 
@@ -45,14 +52,7 @@ pf.fc_by_age_gender <- pf %>%
   arrange(age)
 
 head(pf.fc_by_age_gender)
-```
 
-***
-
-### Plotting Conditional Summaries
-- the codes different but the plot is the same result
-
-```{r Plotting Conditional Summaries}
 ggplot(aes(x = age, y = median_friend_count),
        data = pf.fc_by_age_gender) + 
   geom_line(aes(color = gender))
@@ -66,33 +66,47 @@ ggplot(aes(x = age, y = median_friend_count),
 - Question: How many times more friends does the average female user have than the male user?
 - To answer that question, we need to rearrange the data, from a long format to a wide format. one colomn (gender) -- two colomns (female and male)
 
-```{r}
+```{r Reshape package}
+
+install.packages('reshape2')
+library(reshape2)
+pf.fc_by_age_gender_wide <- dcast(pf.fc_by_age_gender, # the dataset
+                                  age ~ gender, # left list the variable want to keep, right side is the variable need to split
+                                  value.var = 'median_friend_count')
+head(pf.fc_by_age_gender_wide)
+
+```
+
+```{r Tidyr Package}
 install.packages('tidyr')
 library(tidyr)
 spread(subset(pf.fc_by_age_gender, 
        select = c('gender', 'age', 'median_friend_count')), 
        gender, median_friend_count)
-install.packages('reshape2')
-library(reshape2)
-```
 
+```
 
 ***
 
 ### Ratio Plot
-Notes:
+- Plot the ratio of the female to male median friend counts 
 
 ```{r Ratio Plot}
+library(ggplot2)
+ggplot(aes(x = age, y = female),
+       data - pf.fc_by_age_gender_wide) +
+  geom_line() 
+  geom_hline(yintercept = 1, alpha = 0.3, linetype = 2)
 
 ```
 
 ***
 
 ### Third Quantitative Variable
-Notes:
 
 ```{r Third Quantitative Variable}
-
+pf$year_joined <- floor(2014 - pf$tenure/365) # floor() round down to the nearest interger. ceiling() round down to the cloest year
+head(pf) 
 ```
 
 ***
@@ -101,7 +115,11 @@ Notes:
 Notes:
 
 ```{r Cut a Variable}
+summary(pf$year_joined)
+table(pf$year_joined)
 
+# create 4 bins from 2004-2009, 2009-2011,2011-2012,2012-2014
+pf$year_joined.bucket <- cut(pf$year_joined, c(2004, 2009, 2011, 2012, 2014))
 ```
 
 ***
