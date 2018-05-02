@@ -222,78 +222,92 @@ ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
 
 ***
 
-### Sean's NFL Fan Sentiment Study
-Notes:
-
-***
-
-### Introducing the Yogurt Data Set
-Notes:
-
-***
-
-### Histograms Revisited
-Notes:
-
+### Yogurt Data Set
 ```{r Histograms Revisited}
+yo <- read.csv('yogurt.csv')
+
+str(yo)
+
+# change the id from anint to a factor
+yo$id <- factor(yo$id)
+str(yo)
+
+qplot(price, data = yo)
+qplot(price, data = yo, binwidth = 10)
+# the second grap is a very biased model since it omit the gaps between prices
 
 ```
 
 ***
 
 ### Number of Purchases
-Notes:
+
 
 ```{r Number of Purchases}
+# create a new variable: all.purchases, which gives the total counts of yogurt for each observation or household
 
+yo <- transform(yo, all.purchases = strawberry + blueberry + pina.colada + plain + mixed.berry)
+
+summary(yo$all.purchases)
 ```
 
 ***
 
 ### Prices over Time
-Notes:
+- explore customer behavior
 
 ```{r Prices over Time}
+qplot(x = all.purchases, data = yo, binwidth = 1,
+      fill = I('#099DD9'))
+# most houshold buy one or two yogurts at a time
 
+# create a scatterplot of price vs time, which will be an example of a time series plot
+ggplot(aes(x = time, y = price), data = yo) + 
+  geom_point(alpha = 1/10)
+
+# solution
+ggplot(aes(x = time, y = price), data = yo) + 
+  geom_jitter(alpha = 1/4, shape = 21, fill=I('#F79420'))
+
+# the most commom price seem to be increasing over time.
 ```
-
-***
-
-### Sampling Observations
-Notes:
 
 ***
 
 ### Looking at Samples of Households
+- take some random samples to take a closer look
 
 ```{r Looking at Sample of Households}
+# set the seed for reproducible results
+set.seed(4230)
+sample.ids <- sample(levels(yo$id), 16)
+
+ggplot(aes(x = time, y = price),
+       data = subset(yo, id %in% sample.ids)) +
+  facet_wrap(~id) +
+  geom_line() +
+  geom_point(aes(size = all.purchases), pch = 1)
 
 ```
 
 ***
+### Many Variables -- Scatterplot Matrix
 
-### The Limits of Cross Sectional Data
-Notes:
+```{r Scatterplot Matrix}
+library(GGally)
+theme_set(theme_minimal(20))
 
-***
+# set the seed for reproducible results
 
-### Many Variables
-Notes:
+set.seed(1835)
+pf_subset <- pf[,c('age','dob_year','dob_month','gender','tenure')]
+names(pf_subset)
+ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000),])
 
-***
-
-### Scatterplot Matrix
-Notes:
-
-***
-
-### Even More Variables
-Notes:
-
+```
 ***
 
 ### Heat Maps
-Notes:
 
 ```{r}
 nci <- read.table("nci.tsv")
@@ -301,6 +315,7 @@ colnames(nci) <- c(1:64)
 ```
 
 ```{r}
+library(reshape2)
 nci.long.samp <- melt(as.matrix(nci[1:200,]))
 names(nci.long.samp) <- c("gene", "case", "value")
 head(nci.long.samp)
@@ -311,14 +326,4 @@ ggplot(aes(y = gene, x = case, fill = value),
   scale_fill_gradientn(colours = colorRampPalette(c("blue", "red"))(100))
 ```
 
-
-***
-
-### Analyzing Three of More Variables
-Reflection:
-
-***
-
-Click **KnitHTML** to see all of your hard work and to have an html
-page of this lesson, your answers, and your notes!
 
