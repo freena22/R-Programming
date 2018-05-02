@@ -4,7 +4,6 @@ Lesson 5
 
 ### Third Qualitative Variable
 
-
 ```{r Third Qualitative Variable}
 library(ggplot2)
 # we have noticed that female users have more friends on average than male users, is that just because female users have a different age distribution? Or maybe conditional on age?
@@ -95,7 +94,7 @@ spread(subset(pf.fc_by_age_gender,
 library(ggplot2)
 ggplot(aes(x = age, y = female),
        data - pf.fc_by_age_gender_wide) +
-  geom_line() 
+  geom_line() +
   geom_hline(yintercept = 1, alpha = 0.3, linetype = 2)
 
 ```
@@ -105,14 +104,14 @@ ggplot(aes(x = age, y = female),
 ### Third Quantitative Variable
 
 ```{r Third Quantitative Variable}
-pf$year_joined <- floor(2014 - pf$tenure/365) # floor() round down to the nearest interger. ceiling() round down to the cloest year
+# floor() round down to the nearest interger. ceiling() round down to the cloest year
+pf$year_joined <- floor(2014 - pf$tenure/365) 
 head(pf) 
 ```
 
 ***
 
 ### Cut a Variable
-Notes:
 
 ```{r Cut a Variable}
 summary(pf$year_joined)
@@ -125,47 +124,68 @@ pf$year_joined.bucket <- cut(pf$year_joined, c(2004, 2009, 2011, 2012, 2014))
 ***
 
 ### Plotting it All Together
-Notes:
 
 ```{r Plotting it All Together}
+table(pf$year_joined.bucket, useNA = 'ifany')
+ggplot(aes(x = age, y = friend_count), 
+       data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+
+# create a line graph of friend_count vs. age, so that each year_joined.bucket is a line tracking the median user friend_count across age
+ggplot(aes(x = age, y = friend_count), 
+       data = subset(pf, !is.na(year_joined.bucket))) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = 'summary', fun.y = median)
+
+# From the plot above, we can see users with a longer tenure tend to have higher friend counts, with the exception of the older users
 
 ```
 
 ***
 
 ### Plot the Grand Mean
-Notes:
 
 ```{r Plot the Grand Mean}
+ggplot(aes(x = age, y = friend_count), 
+       data = subset(pf, !is.na(year_joined.bucket))) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = 'summary', fun.y = mean) +
+  geom_line(stat = 'summary', fun.y = mean, linetype = 2)
 
+# ploting a grand mean is a good remindar that much of the data in the sample is about members of recent cohorts
 ```
 
 ***
 
 ### Friending Rate
-Notes:
+- check the freind count each day for each user 
 
 ```{r Friending Rate}
 
+with(subset(pf, tenure > 1), summary(friend_count / tenure))
+
+# the max is 417, which is an outlier since the 3rd Qu is only 0.56
 ```
 
 ***
 
-### Friendships Initiated
-Notes:
-
-What is the median friend rate?
-
-What is the maximum friend rate?
-
 ```{r Friendships Initiated}
+# create a line graph of mean of friendships_initiated per day vs. tenure colored by year_joined.bucket
+# also need to subset the data to only consider user with at least one day of tenure
+ggplot(aes(x = tenure, y = friendships_initiated / tenure), 
+       data = subset(pf, tenure >= 1)) +
+  geom_line(aes(color = year_joined.bucket),
+            stat = 'summary', fun.y = mean)
+
+# it appears that users with more tenure typically initiate less friendships
 
 ```
 
 ***
 
 ### Bias-Variance Tradeoff Revisited
-Notes:
+- there's a lot of noise in the graph since we're plotting the mean of y for every possible tenure x value
+- we can adjust this noise by bending x-axis differently
 
 ```{r Bias-Variance Tradeoff Revisited}
 
@@ -192,7 +212,12 @@ ggplot(aes(x = 90 * round(tenure / 90), y = friendships_initiated / tenure),
   geom_line(aes(color = year_joined.bucket),
             stat = "summary",
             fun.y = mean)
+# use geom_smooth to automatically adjust 
+ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_smooth(aes(color = year_joined.bucket)) 
 
+# we still see that the friendships initiated declines as tenure increases
 ```
 
 ***
