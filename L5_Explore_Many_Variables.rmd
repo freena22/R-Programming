@@ -1,7 +1,6 @@
-Lesson 5
+L5 Explore Many Varaibels 
 ========================================================
 ***
-
 ### Third Qualitative Variable
 
 ```{r Third Qualitative Variable}
@@ -15,8 +14,8 @@ ggplot(aes(x = gender, y = age),
 
 # Male users are younger,we might actually think a simple male to female comparision doesn't capture their substantial differences in friend count. So, let's look at median friend count by age and gender instead.
 ggplot(aes(x = age, y = friend_count),
-       data = subset(pf, !is.na(gender))) + 
-  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+       data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender),stat = 'summary', fun.y = median)
 
 ```
 
@@ -212,6 +211,7 @@ ggplot(aes(x = 90 * round(tenure / 90), y = friendships_initiated / tenure),
   geom_line(aes(color = year_joined.bucket),
             stat = "summary",
             fun.y = mean)
+
 # use geom_smooth to automatically adjust 
 ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
        data = subset(pf, tenure > 0)) +
