@@ -23,6 +23,8 @@ This tidy data set contains 1,599 red wines with 11 variables on the chemical pr
 # want it to. This will clean up the flow of your report.
 
 library(ggplot2)
+library(GGally)
+
 
 ```
 
@@ -37,6 +39,9 @@ head(wine, 5)
 str(wine)
 
 summary(wine)
+
+ggplot(aes(x = quality, y = alcohol), data = wine) +
+  geom_line(stat = 'summary', fun.y = median)
 
 ```
 
