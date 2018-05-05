@@ -326,15 +326,5 @@ mtable(m1, m2, m3, m4, m5)
 # d. diamond market in China booming
 # e. uneven recovery/price increase across differernt carat weight
 
-# 8. A Bigger, Better Data Set
-
-install.package('bitops')
-install.packages('RCurl')
-library('bitops')
-library('RCurl')
-
-diamondsurl = getBinaryURL("https://raw.github.com/solomonm/diamonds-data/master/BigDiamonds.Rda")
-load(rawConnection(diamondsurl))
-
 
 
