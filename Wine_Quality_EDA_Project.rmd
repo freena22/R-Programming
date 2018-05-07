@@ -43,7 +43,6 @@ From the structure of dataset, we have 11 variables, in which the 'quality' is t
 11 - alcohol: the percent alcohol content of the wine (% by volume)
 12 - quality (score between 0 and 10)
 
-
 # 2. Univariate Plots Section
 
 > **Tip**: In this section, you should perform some preliminary exploration of
