@@ -71,14 +71,21 @@ tail(wine)
 
 # 2. Univariate Plots Section
 
-> **Tip**: In this section, you should perform some preliminary exploration of
-your dataset. Run some summaries of the data and create univariate plots to
-understand the structure of the individual variables in your dataset. Don't
-forget to add a comment after each plot or closely-related group of plots!
-There should be multiple code chunks and text sections; the first one below is
-just to help you get started.
-
 ```{r echo=FALSE, Univariate_Plots}
+
+# dependent variable -- quality 
+
+ggplot(aes(x = quality), data = wine) +
+  geom_bar(fill = '#CC79A7')
+
+summary(wine$quality)
+
+
+```
+
+
+```{r}
+ggplot(df, aes(x=cond, y=yval)) + geom_bar(stat="identity", fill="#FF9999", colour="black")
 
 ggplot(aes(x = quality, y = alcohol), data = wine) +
   geom_line(stat = 'summary', fun.y = median)
@@ -88,7 +95,6 @@ qplot(x = quality, data = wine, binwidth = 1,
       color =  I('gray'), fill = I('#F79420')) + 
   scale_x_continuous(limits = c(2, 9), breaks = seq(2, 9, 1))
 ```
-
 > **Tip**: Make sure that you leave a blank line between the start / end of
 each code block and the end / start of your Markdown text so that it is
 formatted nicely in the knitted text. Note as well that text on consecutive
@@ -113,6 +119,7 @@ investigation into your feature(s) of interest?
 ### Of the features you investigated, were there any unusual distributions? \
 Did you perform any operations on the data to tidy, adjust, or change the form \
 of the data? If so, why did you do this?
+
 
 
 # Bivariate Plots Section
