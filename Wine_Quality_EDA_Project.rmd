@@ -74,15 +74,31 @@ tail(wine)
 ```{r echo=FALSE, Univariate_Plots}
 
 # dependent variable -- quality 
-
 ggplot(aes(x = quality), data = wine) +
-  geom_bar(fill = '#CC79A7')
+  geom_bar(fill = '#999999')
 
 summary(wine$quality)
 
-
+# min = 3 max = 8 means no values lower than 3 and greater than 9
+# cut the quality.bucket -- 3-4 low/ 5-6 median/ 7-8 high
 ```
 
+
+```{r}
+q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_bar()
+q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_bar()
+q3 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar()
+q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar()
+q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar()
+q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar()
+q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar()
+q8 <- ggplot(aes(x = density), data = wine) + geom_bar()
+q9 <- ggplot(aes(x = pH), data = wine) + geom_bar()
+q10 <- ggplot(aes(x = sulphates), data = wine) + geom_bar()
+q11 <- ggplot(aes(x = alcohol), data = wine) + geom_bar()
+grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
+
+```
 
 ```{r}
 ggplot(df, aes(x=cond, y=yval)) + geom_bar(stat="identity", fill="#FF9999", colour="black")
@@ -95,6 +111,7 @@ qplot(x = quality, data = wine, binwidth = 1,
       color =  I('gray'), fill = I('#F79420')) + 
   scale_x_continuous(limits = c(2, 9), breaks = seq(2, 9, 1))
 ```
+
 > **Tip**: Make sure that you leave a blank line between the start / end of
 each code block and the end / start of your Markdown text so that it is
 formatted nicely in the knitted text. Note as well that text on consecutive
