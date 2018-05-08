@@ -43,6 +43,32 @@ From the structure of dataset, we have 11 variables, in which the 'quality' is t
 11 - alcohol: the percent alcohol content of the wine (% by volume)
 12 - quality (score between 0 and 10)
 
+##  1.4 Data Wrangling and Preprocessing:
+
+Take a quick look of the dataset, I can find some small issues need to fix before the EDA. Even though this dataset is pretty tidy, fix these issues will make the dataset more clear. 
+
+1. Change the variable names to make them identical -- change 'citric.acid' to 'citric.acidity'.
+2. standardize the measure method of the chemical properties of the wine -- change mg / dm^3 to g / dm^3 for 'total sulfur dioxide' and 'free sulfur dioxide'.
+3. drop the 'X' variable since it's simply a index that duplicate with the default index.
+
+```{r Data Wrangling}
+
+# 1. rename col
+colnames(wine)[colnames(wine)=="citric.acid"] <- "citric.acidity"
+
+# 2. change measurement 
+wine$total.sulfur.dioxide <- wine$total.sulfur.dioxide / 1000
+wine$free.sulfur.dioxide <- wine$free.sulfur.dioxide / 1000
+
+# 3. drop X
+drops <- c('X')
+wine <- wine[, !names(wine) %in% drops]
+
+# 4. check the result
+tail(wine)
+```
+
+
 # 2. Univariate Plots Section
 
 > **Tip**: In this section, you should perform some preliminary exploration of
