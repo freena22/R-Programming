@@ -129,7 +129,20 @@ grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,ncol = 3)
 
 ```
 
-```{r}
+From the plots and summary above, we can see that distributions of the variables are varied. 
+
+is over dispersed, such as  all have a very long tails. Thus, I 
+
+transform the variable by taking the sqrt and log10 
+
+'fixed.acidity', 'volatile.acidity', 'citric.acidity',  --  no need to change
+'residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates' -- change to log10
+'citric.acidity', 'free.sulfur.dioxide' -- change to sqrt
+'density','pH','alcohol'
+
+
+
+```{r echo=FALSE, Transforming Data}
 q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_histogram(binwidth = 1) + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
 
 q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
@@ -141,7 +154,7 @@ q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_histogram(binwidth = 0
 q5 <- ggplot(aes(x = chlorides), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  scale_x_log10()
 
 
-q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.01) + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') 
+q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.01) + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') +  scale_x_sqrt()
 
 q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green') + scale_x_log10()
 
@@ -158,26 +171,8 @@ grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
 
 ```
 
-From the plots and summary above, we can see that distributions of the variables are varied. 
-'fixed.acidity', 'volatile.acidity', 'citric.acidity', 'free.sulfur.dioxide' --  no need to change
-'residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates' -- change to log10
-'citric.acidity' -- change to sqrt
-'density','pH','alcohol'
 
 
-
-
-```{r echo=FALSE, Transforming Data}
-ggplot(df, aes(x=cond, y=yval)) + geom_bar(stat="identity", fill="#FF9999", colour="black")
-
-ggplot(aes(x = quality, y = alcohol), data = wine) +
-  geom_line(stat = 'summary', fun.y = median)
-summary(wine$quality)
-
-qplot(x = quality, data = wine, binwidth = 1,
-      color =  I('gray'), fill = I('#F79420')) + 
-  scale_x_continuous(limits = c(2, 9), breaks = seq(2, 9, 1))
-```
 
 
 
@@ -186,16 +181,16 @@ qplot(x = quality, data = wine, binwidth = 1,
 
 ### What is the structure of your dataset?
 
+The Red Wine Dataset includes 1599 observations with 13 variables, which downloaded from Udacity Course website. 
+
 ### What is/are the main feature(s) of interest in your dataset?
 
-### What other features in the dataset do you think will help support your \
-investigation into your feature(s) of interest?
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
 ### Did you create any new variables from existing variables in the dataset?
 
-### Of the features you investigated, were there any unusual distributions? \
-Did you perform any operations on the data to tidy, adjust, or change the form \
-of the data? If so, why did you do this?
+I create a new 
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
 
 
