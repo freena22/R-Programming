@@ -79,12 +79,16 @@ From the structure of the dataset, we can see that all the variables are numeric
 
 # check the distribution of quality
 summary(wine$quality)
-ggplot(aes(x = quality), data = wine) +
-  geom_bar(fill = '#999999')
+p1 <- ggplot(aes(x = quality), data = wine) +
+  geom_bar(fill = '#9999CC')
 
 # cut the quality.bucket -- 1-4 low/ 5-6 medium/ 7-8 high 
 wine$quality.bucket <- cut(wine$quality, c(1,4,6,8), labels = c('Low','Medium', 'High'))
 summary(wine$quality.bucket)
+p2 <- ggplot(aes(x = quality.bucket), data = wine) +
+  geom_bar(fill = '#9999CC')
+
+grid.arrange(p1,p2)
 
 ```
 
@@ -107,6 +111,7 @@ q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar() + geom_vline(aes
 
 q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green')
 
+
 q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green')
 
 q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green')
@@ -119,11 +124,46 @@ q10 <- ggplot(aes(x = sulphates), data = wine) + geom_bar() + geom_vline(aes(xin
 
 q11 <- ggplot(aes(x = alcohol), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + geom_vline(aes(xintercept = median(alcohol)), color = 'green')
 
-grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
+
+grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,ncol = 3)
 
 ```
 
-Based on the plots and summary, most of the variables
+```{r}
+q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_histogram(binwidth = 1) + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
+
+q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
+
+q3 <- ggplot(aes(x = citric.acidity), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + geom_vline(aes(xintercept = median(citric.acidity)), color = 'green') + scale_x_sqrt()
+
+q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + geom_vline(aes(xintercept = median(residual.sugar)), color = 'green') +  scale_x_log10()
+
+q5 <- ggplot(aes(x = chlorides), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  scale_x_log10()
+
+
+q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.01) + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') 
+
+q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green') + scale_x_log10()
+
+q8 <- ggplot(aes(x = density), data = wine) + geom_histogram(binwidth = 0.001) + geom_vline(aes(xintercept = mean(density)), color = 'red') + geom_vline(aes(xintercept = median(density)), color = 'green')
+
+q9 <- ggplot(aes(x = pH), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(pH)), color = 'red') + geom_vline(aes(xintercept = median(pH)), color = 'green')
+
+q10 <- ggplot(aes(x = sulphates), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + geom_vline(aes(xintercept = median(sulphates)), color = 'green') + scale_x_log10()
+
+q11 <- ggplot(aes(x = alcohol), data = wine) + geom_histogram(binwidth = 0.5) + geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + geom_vline(aes(xintercept = median(alcohol)), color = 'green')
+
+grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
+
+
+```
+
+From the plots and summary above, we can see that distributions of the variables are varied. 
+'fixed.acidity', 'volatile.acidity', 'citric.acidity', 'free.sulfur.dioxide' --  no need to change
+'residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates' -- change to log10
+'citric.acidity' -- change to sqrt
+'density','pH','alcohol'
+
 
 
 
