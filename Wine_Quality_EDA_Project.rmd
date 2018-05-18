@@ -2,9 +2,9 @@ RED WINE QUALITY EDA -- Freena
 ========================================================
 # 1. Introduction
 
-In this project, I explore the quality of red wine. This data set contains 1,599 red wines with 11 variables on the chemical properties of the wine. At least 3 wine experts rated the quality of each wine, providing a rating between 0 (very bad) and 10 (very excellent). (cite1)
+In this project, I explore the quality of red wine. This data set contains 1,599 red wine records with 11 variables on the chemical properties of the wine. At least 3 wine experts rated the quality of each wine, providing a rating between 0 (very bad) and 10 (very excellent). (cite1)
 
-Through these variables, I'd like to uncover which chemical properties influence the quality of red wines? and Which variable affect most? Perhaps the results can help me in choosing red wine next time at the Wine shop. 
+Through these variables, I'd like to uncover which chemical properties influence the quality of red wines and Which variable affect most? Perhaps the results can help me in choosing red wine next time at the Wine shop. 
 
 ## 1.1 Preparations
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -28,7 +28,7 @@ str(wine)
 
 ##  1.3 Description of Variables:
 
-From the structure of dataset, we have 11 variables, in which the 'quality' is the dependent variable and other 10 properties are the independent variables. In addition, there's no missing values in these variables and the dataset itself is tidy.
+For the structure of dataset, we have 11 variables, in which the 'quality' is the dependent variable and other 10 properties are the independent variables. In addition, there's no missing values in these variables and the dataset itself is pretty tidy.
 
 1 - fixed acidity: most acids involved with wine or fixed or nonvolatile (tartaric acid - g / dm^3)
 2 - volatile acidity: the amount of acetic acid in wine (acetic acid - g / dm^3)
@@ -45,10 +45,10 @@ From the structure of dataset, we have 11 variables, in which the 'quality' is t
 
 ##  1.4 Data Wrangling and Preprocessing:
 
-Take a quick look of the dataset, I can find some small issues need to fix before the EDA. Even though this dataset is pretty tidy, fix these issues will make the dataset more clear. 
+Take a quick look of the dataset, I can find some small issues need to fix before the EDA. Even though this dataset is pretty tidy, fixing these issues will make the dataset perfect to conduct further exploration.
 
-1. Change the variable names to make them identical -- change 'citric.acid' to 'citric.acidity'.
-2. standardize the measure method of the chemical properties of the wine -- change mg / dm^3 to g / dm^3 for 'total sulfur dioxide' and 'free sulfur dioxide'.
+1. Change the variable names to make all variable names identical -- change 'citric.acid' to 'citric.acidity'.
+2. Standardize the measure method of the chemical properties of the wine -- change mg / dm^3 to g / dm^3 for 'total sulfur dioxide' and 'free sulfur dioxide'.
 3. drop the 'X' variable since it's simply a index that duplicate with the default index.
 
 ```{r Data Wrangling}
@@ -73,18 +73,20 @@ tail(wine)
 
 ## 2.1 Dependent Variable -- Quality
 
-From the structure of the dataset, we can see that all the variables are numerics expect the quality. It's ok to keep this data type without changing it from integer to factor since I need to create a new variable called 'quality.bucket' to set three levels of wine quality: low/median/high based on the distribution of quality (from 1 to 8).
+From the structure of the dataset, we can see that all the variables are numerics except the quality. It's ok to keep this data type without changing it from integer to factor since I need to create a new variable called 'quality.bucket' to set three levels of wine quality: low/median/high based on the true distribution of quality (from 1 to 8).
 
 ```{r echo=FALSE, Distribution of Quality}
 
 # check the distribution of quality
 summary(wine$quality)
+
 p1 <- ggplot(aes(x = quality), data = wine) +
   geom_bar(fill = '#9999CC')
 
 # cut the quality.bucket -- 1-4 low/ 5-6 medium/ 7-8 high 
 wine$quality.bucket <- cut(wine$quality, c(1,4,6,8), labels = c('Low','Medium', 'High'))
 summary(wine$quality.bucket)
+
 p2 <- ggplot(aes(x = quality.bucket), data = wine) +
   geom_bar(fill = '#9999CC')
 
@@ -94,7 +96,7 @@ grid.arrange(p1,p2)
 
 ## 2.2 Independnet Variables 
 
-First, I check the statsitical summary of all the independnet variables and plot the histograms of to check their distribution as well as visualize the mean (red line) and median (green line) in the plots.
+For all the independent variables, I check all the statsitical summarys and plot the histograms of to check their distribution as the same time visualize the mean (red line) and median (green line) in the plots.
 
 ```{r echo=FALSE, Distribution of Independent Variables}
 
@@ -110,7 +112,6 @@ q3 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar() + geom_vline(aes
 q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + geom_vline(aes(xintercept = median(residual.sugar)), color = 'green')
 
 q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green')
-
 
 q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green')
 
@@ -129,18 +130,13 @@ grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,ncol = 3)
 
 ```
 
-From the plots and summary above, we can see that distributions of the variables are varied. 
+From the plots and summarys above, we can see that distributions of the variables are varied. Many variables are over-dispered with a very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables (citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
 
-is over dispersed, such as  all have a very long tails. Thus, I 
+I also apply the transformation to the variables ('fixed.acidity', 'volatile.acidity', 'citric.acidity') but there're no significant change in the distribution, for that reason, I keep the original distribution status for these three variables. 
 
-transform the variable by taking the sqrt and log10 
+Besides, no need to change in the distributions of three variables: 'density','pH', and 'alcohol'.
 
-'fixed.acidity', 'volatile.acidity', 'citric.acidity',  --  no need to change
-'residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates' -- change to log10
-'citric.acidity', 'free.sulfur.dioxide' -- change to sqrt
-'density','pH','alcohol'
-
-
+In short, I trim the long tails for most variables by taking log base10 and sqrt at the same time adjust the binwidth of them for better visualization. 
 
 ```{r echo=FALSE, Transforming Data}
 q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_histogram(binwidth = 1) + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
@@ -171,29 +167,26 @@ grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
 
 ```
 
-
-
-
-
-
 # Univariate Analysis
-
 
 ### What is the structure of your dataset?
 
-The Red Wine Dataset includes 1599 observations with 13 variables, which downloaded from Udacity Course website. 
+For the structure of dataset, we have 11 variables, in which the 'quality' is the dependent variable and other 10 properties are the independent variables. In addition, there's no missing values in these variables and the dataset itself is pretty tidy.
 
 ### What is/are the main feature(s) of interest in your dataset?
 
+The 'quality' is the dependent variable which I am interest most. I also feel interest in alcohol, residual.sugar, density, and pH, as those might be the important factors to red wine quality rating.
+
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+citric.acidity and chlorides
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I create a new 
+Yes. I create a new variable called 'quality.bucket' to set three levels of wine quality: low/median/high based on the true distribution of quality (from 1 to 8).
+
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
-
-
+Many variables are over-dispered with a very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables (citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
 
 
 # Bivariate Plots Section
