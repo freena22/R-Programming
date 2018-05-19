@@ -13,6 +13,7 @@ library(ggplot2)
 library(GGally)
 library(gridExtra)
 library(dplyr)
+library(corrplot)
 ```
 
 ## 1.2 Intro to The Dataset 
@@ -49,9 +50,9 @@ Take a quick look of the dataset, I can find some small issues need to fix befor
 
 1. Change the variable names to make all variable names identical -- change 'citric.acid' to 'citric.acidity'.
 2. Standardize the measure method of the chemical properties of the wine -- change mg / dm^3 to g / dm^3 for 'total sulfur dioxide' and 'free sulfur dioxide'.
-3. drop the 'X' variable since it's simply a index that duplicate with the default index.
+# 3. drop the 'X' variable since it's simply a index that duplicate with the default index.
 
-```{r Data Wrangling}
+```{r Data_Wrangling}
 
 # 1. rename col
 colnames(wine)[colnames(wine)=="citric.acid"] <- "citric.acidity"
@@ -60,11 +61,7 @@ colnames(wine)[colnames(wine)=="citric.acid"] <- "citric.acidity"
 wine$total.sulfur.dioxide <- wine$total.sulfur.dioxide / 1000
 wine$free.sulfur.dioxide <- wine$free.sulfur.dioxide / 1000
 
-# 3. drop X
-drops <- c('X')
-wine <- wine[, !names(wine) %in% drops]
-
-# 4. check the result
+# 3. check the result
 tail(wine)
 ```
 
@@ -75,7 +72,7 @@ tail(wine)
 
 From the structure of the dataset, we can see that all the variables are numerics except the quality. It's ok to keep this data type without changing it from integer to factor since I need to create a new variable called 'quality.bucket' to set three levels of wine quality: low/median/high based on the true distribution of quality (from 1 to 8).
 
-```{r echo=FALSE, Distribution of Quality}
+```{r echo=FALSE, Distribution_of_Quality}
 
 # check the distribution of quality
 summary(wine$quality)
@@ -98,7 +95,7 @@ grid.arrange(p1,p2)
 
 For all the independent variables, I check all the statsitical summarys and plot the histograms of to check their distribution as the same time visualize the mean (red line) and median (green line) in the plots.
 
-```{r echo=FALSE, Distribution of Independent Variables}
+```{r echo=FALSE, Distribution}
 
 summary(wine)
 geom_histogram()
@@ -138,7 +135,7 @@ Besides, no need to change in the distributions of three variables: 'density','p
 
 In short, I trim the long tails for most variables by taking log base10 and sqrt at the same time adjust the binwidth of them for better visualization. 
 
-```{r echo=FALSE, Transforming Data}
+```{r echo=FALSE, Transforming_Data}
 q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_histogram(binwidth = 1) + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
 
 q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
@@ -189,31 +186,91 @@ Yes. I create a new variable called 'quality.bucket' to set three levels of wine
 Many variables are over-dispered with a very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables (citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
 
 
-# Bivariate Plots Section
+# 3. Bivariate Plots Section
 
-> **Tip**: Based on what you saw in the univariate plots, what relationships
-between variables might be interesting to look at in this section? Don't limit
-yourself to relationships between a main output feature and one of the
-supporting variables. Try to look at relationships between supporting variables
-as well.
+## 3.1 Correlation Summary
 
-```{r echo=FALSE, Bivariate_Plots}
+My main interest is to find the featues which correlated most to the quality, thus I first plot a correlation plot to check all the bivariate relations. Among them, the ones with the highest correlation with 'quality' by the Pearson method are alcohol (r^2 = 0.48), volatile acidity (r^2 = -0.39), and sulphates (r^2 = 0.25). 
+
+Other features also have quite strong relationship between each other. For example, density vs. fixed.acidity (r^2 = 0.67), fixed.acidity vs.citric.acidity (r^2 = 0.67), fixed.acidity vs. pH (r^2 = -0.68), total.sulfur.dioxide vs. free.sulfur.dioxide (r^2 = 0.67). However, those strong relationship perhaps due to sharing similar chemical properties or elements.
+
+In addition, another interesting point I found is the that the higher red wine density the higher residual.sugar, with a moderate positive correlation (r^2 = 0.36) One possible explanation is that people are sensitive to sugar and thus weight sweet taste as important measure of the feeling of density. Surprisingly, alcohol negatively correlated with density (r^2 = -0.5), which means less alcohol involved higher the density. 
+
+## 3.2 Pearson Correlation Matrix
+
+```{r echo=FALSE, Bivariate_Plots_Correlation}
+
+matrix <- cor(subset(wine
+                 ,select = -c(X, quality.bucket))
+          ,method = "pearson")
+
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(matrix, method="color", col=col(200),  
+         type="lower", order="hclust", number.cex = .7, # change the size of number
+         addCoef.col = "black", # Add coefficient of correlation
+         tl.col="black", tl.srt=15,  # Text label color and rotation
+         # hide correlation coefficient on the principal diagonal
+         diag=FALSE 
+         )
+with(wine, cor.test(quality, alcohol, method = 'pearson'))
+with(wine, cor.test(quality, sulphates, method = 'pearson'))
+with(wine, cor.test(quality, volatile.acidity, method = 'pearson'))
 
 ```
 
+## 3.3 Bivariate Plots Section
+
+```{r echo=FALSE, Alcohol/sulphates/volatile.acidity_quality}
+
+ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
+  geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
+  ggtitle("Quality vs Alcohol") +
+  xlab("Quality") +
+  ylab("Alcohol (%)")
+
+ggplot(aes(y=sulphates, x=quality.bucket), data=wine) +
+  geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
+  ggtitle("Quality vs Sulphates") +
+  xlab("Quality") +
+  ylab("Sulphates")
+
+ggplot(aes(y=volatile.acidity, x=quality.bucket), data=wine) +
+  geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
+  ggtitle("Quality vs Xolatile.acidity") +
+  xlab("Quality") +
+  ylab("Volatile.acidity")
+
+```
+```{r echo=FALSE, Residual.Sugar_density}
+with(wine, cor.test(residual.sugar, density, method = 'pearson'))
+ggplot(aes(y=residual.sugar, x=density), data=wine) +
+  geom_jitter(alpha=0.2, color = 'orange') +
+  geom_smooth(method='lm') +
+  ggtitle("Residual.Sugar vs Density") +
+  xlab("Density") +
+  ylab("Residual.Sugar")
+```
+```{r echo=FALSE, Alcohol_density}
+with(wine, cor.test(alcohol, density, method = 'pearson'))
+ggplot(aes(x=alcohol, y=density), data=wine) +
+  geom_jitter(alpha=0.2, color = 'orange') +
+  geom_smooth(method='lm') +
+  ggtitle("Alcohol vs Density") +
+  xlab("Alcohol") +
+  ylab("Density")
+```
 # Bivariate Analysis
 
-> **Tip**: As before, summarize what you found in your bivariate explorations
-here. Use the questions below to guide your discussion.
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+ 
+Alcohol percentage of wine (r^2 = 0.48) has a high positive relationship with quality while other two features volatile acidity (r^2 = -0.39) and sulphates (r^2 = 0.25) also correlated with quality of red wine. 
 
-### Talk about some of the relationships you observed in this part of the \
-investigation. How did the feature(s) of interest vary with other features in \
-the dataset?
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
-### Did you observe any interesting relationships between the other features \
-(not the main feature(s) of interest)?
+Yes. First, the higher red wine density the higher residual.sugar, with a moderate positive correlation (r^2 = 0.36). Second, alcohol negatively correlated with density (r^2 = -0.5), which means less alcohol involved higher the density. 
 
 ### What was the strongest relationship you found?
+The strongest realtionship I found is the nagative relationship between fixed.acidity and pH (r^2 = -0.68), even though it does not related to my main focus. 
 
 
 # Multivariate Plots Section
@@ -291,5 +348,3 @@ the insights you found. What were some of the struggles that you went through?
 What went well? What was surprising? Make sure you include an insight into
 future work that could be done with the dataset.
 
-> **Tip**: Don't forget to remove this, and the other **Tip** sections before
-saving your final work and knitting the final report!
