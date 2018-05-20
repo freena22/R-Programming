@@ -270,18 +270,16 @@ Alcohol percentage of wine (r^2 = 0.48) has a high positive relationship with qu
 Yes. First, the higher red wine density the higher residual.sugar, with a moderate positive correlation (r^2 = 0.36). Second, alcohol negatively correlated with density (r^2 = -0.5), which means less alcohol involved higher the density. 
 
 ### What was the strongest relationship you found?
-The strongest realtionship I found is the nagative relationship between fixed.acidity and pH (r^2 = -0.68), even though it does not related to my main focus. 
+The strongest realtionship I found is the nagative relationship between fixed.acidity and pH (r^2 = -0.68), even though it is not related to my main focus. 
 
 
 # 4. Multivariate Plots Section
 
-Based on the previous plots, I found that density positively correlated with residual.sugar and negatively correlated with alcohol. In this multivariate plots section, I combine residual.sugar, density, and quality together to explore more. 
+Based on the previous analysis, I found that density not only negatively correlated with alcohol (-0.5) but aslo slightly negatively correlated with quality (-0.17). In this multivariate plots section, I combine these three features (alcohol, density, and quality) together to explore more on multivariate analysis. 
 
 ## 4.1 Alcohol x Density x Quality
 
-From the plot, it seems that better quality wines involves higher alcohol percentage as well as lower density, which confirms the pervious correlation analysis that alcohol negatively correlated with density (r^2 = -0.5) as well as alcohol positively correlated with quality (r^2 = 0.48).
-
-To be specific, We can see the blue line seperate clearly the blue dots (high quality) and green dots (medium quality) and most high quality wines locate beyond this blue line. However, the red dots (lowe quality) distribute quite even. We can see a correlation between lower quality wine and alcohol but not that significant. 
+From the plot below, it seems that in general, better quality wines involves higher alcohol percentage as well as lower density, which confirms the pervious Bivariate correlation analysis that alcohol negatively correlated with density (r^2 = -0.5) as well as alcohol positively correlated with quality (r^2 = 0.48). To be specific, We can see the blue line visulizes the negative relationship between alcohol and density, more interested, it also seperates clearly the blue dots (high quality) and green dots (medium quality) and most high quality wines locate beyond this blue line. However, the red dots (lowe quality) distribute quite even. We can see a correlation between lower quality wine and alcohol but not that significant. 
 
 
 ```{r echo=FALSE, Multivariate_Plots_1}
@@ -297,18 +295,17 @@ ggplot(aes(x = density, y = alcohol), data = wine) +
 
 ## 4.2 Residual.Sugar x Density x Quality
 
-This plot shows 
 
+Similarly, pervious analysis shows that density positively correlated with residual.sugar ((r^2 = 0.36) but slightly negatively correlated with quality ((r^2 = -0.17).  In this multivariate plot below, the blue line indicates the positive relationship between density and residual.sugar and the negative relationship between density and quality (more blue dots stay the lower area). However, it's hardly to find a correlation between residual.sugar and quality; the quality colored dots distributes evenly along with to residual.sugar amount change. 
 
 ```{r echo=FALSE, Multivariate_Plots_2}
 
 ggplot(aes(x = residual.sugar, y = density), data = wine) +
-  geom_point(aes(color = quality.bucket), alpha = 0.3, size = 2) +
+  geom_point(aes(color = quality.bucket), alpha = 0.2, size = 2) +
   stat_smooth(method = 'lm', color = 'blue') +
   scale_x_continuous(lim = c(min(wine$residual.sugar), quantile(wine$residual.sugar, 0.90))) +
   scale_y_continuous(lim = c(min(wine$density), quantile(wine$density, 0.99))) +
-  ggtitle('Quality by Alcohol and Density')
-
+  ggtitle('Quality by Sugar and Density')
 
 ```
 
@@ -317,12 +314,10 @@ From the two plots above,
 
 # Multivariate Analysis
 
-### Talk about some of the relationships you observed in this part of the \
-investigation. Were there features that strengthened each other in terms of \
-looking at your feature(s) of interest?
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
 ### Were there any interesting or surprising interactions between features?
-
+The most powerful features lies around quality of wine, alcohol and density. Density has also a strong relationship with sugar.
 
 ------
 
@@ -332,8 +327,7 @@ looking at your feature(s) of interest?
 ### Plot One
 ```{r echo=FALSE, Plot_One}
 matrix <- cor(subset(wine
-                 ,select = -c(X, quality.bucket))
-          ,method = "pearson")
+                 ,select = -c(X, quality.bucket)), method = "pearson")
 
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot(matrix, method="color", col=col(200),  
@@ -347,18 +341,29 @@ corrplot(matrix, method="color", col=col(200),
 
 ### Description One
 
+The first plot I chose give us a full picture of the correlations between each variables. The colors and numbers give us a intutive way to understand all the bivariate correlations immediately, that provide the ideas and clues to do further data exploration. 
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
-ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
+
+p11 <- ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
   geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
   ggtitle("Quality vs Alcohol") +
   xlab("Quality") +
   ylab("Alcohol (%)")
+
+p12 <- ggplot(aes(y=volatile.acidity, x=quality.bucket), data=wine) +
+  geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
+  ggtitle("Quality vs Volatile.acidity") +
+  xlab("Quality") +
+  ylab("Volatile.acidity")
+
+grid.arrange(p11,p12)
 ```
 
 ### Description Two
 
+The second plot I chose 
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
@@ -368,10 +373,12 @@ ggplot(aes(x = density, y = alcohol), data = wine) +
   scale_x_continuous(lim = c(min(wine$density), quantile(wine$density, 0.99))) +
   scale_y_continuous(lim = c(min(wine$alcohol), quantile(wine$alcohol, 0.99))) +
   ggtitle('Quality by Alcohol and Density')
+
 ```
 
 ### Description Three
 
+The third plot I chose indicats the strong and most meaningful relationship in my analysis, that is, high quality wines come with higher alcohol percentage as well as lower density. 
 
 ------
 
