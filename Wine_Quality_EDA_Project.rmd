@@ -275,11 +275,9 @@ The strongest realtionship I found is the nagative relationship between fixed.ac
 
 # 4. Multivariate Plots Section
 
-Based on the previous analysis, I found that density not only negatively correlated with alcohol (-0.5) but aslo slightly negatively correlated with quality (-0.17). In this multivariate plots section, I combine these three features (alcohol, density, and quality) together to explore more on multivariate analysis. 
-
 ## 4.1 Alcohol x Density x Quality
 
-From the plot below, it seems that in general, better quality wines involves higher alcohol percentage as well as lower density, which confirms the pervious Bivariate correlation analysis that alcohol negatively correlated with density (r^2 = -0.5) as well as alcohol positively correlated with quality (r^2 = 0.48). To be specific, We can see the blue line visulizes the negative relationship between alcohol and density, more interested, it also seperates clearly the blue dots (high quality) and green dots (medium quality) and most high quality wines locate beyond this blue line. However, the red dots (lowe quality) distribute quite even. We can see a correlation between lower quality wine and alcohol but not that significant. 
+Previous bivariate analysis confirms that alcohol negatively correlated with density (r^2 = -0.5) as well as alcohol positively correlated with quality (r^2 = 0.48). Combining these three features (alcohol, density, and quality) together, it seems that in general, better quality wines involves higher alcohol percentage as well as lower density,  To be more specific, it's easily see that the blue line shows the negative relationship between alcohol and density, more interested, it also seperates clearly the blue dots (high quality) and green dots (medium quality) and the majority high quality wines locate above this blue line. However, the red dots (lowe quality) distribute quite even. We can see a correlation between lower quality wine and alcohol but not that significant. 
 
 
 ```{r echo=FALSE, Multivariate_Plots_1}
@@ -295,8 +293,7 @@ ggplot(aes(x = density, y = alcohol), data = wine) +
 
 ## 4.2 Residual.Sugar x Density x Quality
 
-
-Similarly, pervious analysis shows that density positively correlated with residual.sugar ((r^2 = 0.36) but slightly negatively correlated with quality ((r^2 = -0.17).  In this multivariate plot below, the blue line indicates the positive relationship between density and residual.sugar and the negative relationship between density and quality (more blue dots stay the lower area). However, it's hardly to find a correlation between residual.sugar and quality; the quality colored dots distributes evenly along with to residual.sugar amount change. 
+Similarly, pervious analysis shows that density positively correlated with residual.sugar ((r^2 = 0.36) but slightly negatively correlated with quality ((r^2 = -0.17).  In this multivariate plot below, the blue line indicates the positive relationship between density and residual.sugar as well as the negative relationship between density and quality (more blue dots stay the lower area). However, it's hardly to find a correlation between residual.sugar and quality; the quality colored dots distributes evenly along with to residual.sugar amount change. 
 
 ```{r echo=FALSE, Multivariate_Plots_2}
 
@@ -309,15 +306,14 @@ ggplot(aes(x = residual.sugar, y = density), data = wine) +
 
 ```
 
-From the two plots above, 
-
-
-# Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
+I found that better quality wines involves higher alcohol percentage as well as lower density. Besides, density also positively correlated with residual.sugar. 
+
 ### Were there any interesting or surprising interactions between features?
-The most powerful features lies around quality of wine, alcohol and density. Density has also a strong relationship with sugar.
+
+One intersting point is that the alcohol has strong positive relationship (r^2 = 0.48) with quality but at the same time has strong negative relationship with density (r^2 = -0.5. For the result, quality also negatively correlats to density but not that strong. 
 
 ------
 
@@ -341,29 +337,23 @@ corrplot(matrix, method="color", col=col(200),
 
 ### Description One
 
-The first plot I chose give us a full picture of the correlations between each variables. The colors and numbers give us a intutive way to understand all the bivariate correlations immediately, that provide the ideas and clues to do further data exploration. 
+The first plot I chose give us a full picture of the correlations between each variables. The colors and numbers provide a intutive way to understand all the bivariate correlations immediately, that provides the ideas and clues for us to do further data exploration. 
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
 
-p11 <- ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
+ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
   geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
   ggtitle("Quality vs Alcohol") +
   xlab("Quality") +
   ylab("Alcohol (%)")
 
-p12 <- ggplot(aes(y=volatile.acidity, x=quality.bucket), data=wine) +
-  geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
-  ggtitle("Quality vs Volatile.acidity") +
-  xlab("Quality") +
-  ylab("Volatile.acidity")
-
-grid.arrange(p11,p12)
 ```
 
 ### Description Two
 
-The second plot I chose 
+The second plot I chose indicates the positive relationship between alcohol and quality but in a detailed way. Even though the alcohol positively correlates with quality in correlation coefficient metric (r^2 = 0.48), specifically the relationship is not that simple. The first two boxplots show that the change of alcohol percentage has less impact between the low and medium quality wines, which means there's no much difference in alcohol for low and medium quality wines. It seems that only high quality wines come with higher alcohol level. 
+
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
@@ -384,9 +374,12 @@ The third plot I chose indicats the strong and most meaningful relationship in m
 
 # Reflection
 
+### Summary
+
 Due to privacy and logistic issues, only physicochemical (inputs) and sensory (the output) variables are available (e.g. there is no data about grape types, wine brand, wine selling price, etc.).
 
 These datasets can be viewed as classification or regression tasks.
+### Limitations
 
 The classes are ordered and not balanced (e.g. there are munch more normal wines than excellent or poor ones). Outlier detection algorithms could be used to detect the few excellent or poor wines. Also, we are not sure if all input variables are relevant.
 
