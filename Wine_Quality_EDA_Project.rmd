@@ -17,6 +17,7 @@ library(corrplot)
 ```
 
 ### 1.1 Intro to The Dataset 
+
 ```{r echo=FALSE, Intro_to_the_Data}
 # Load the Data
 wine <- read.csv('wineQuality.csv')
@@ -93,7 +94,8 @@ p1 <- ggplot(aes(x = quality), data = wine) +
   geom_bar(fill = '#9999CC')
 
 # cut the quality.bucket -- 1-4 low/ 5-6 medium/ 7-8 high 
-wine$quality.bucket <- cut(wine$quality, c(1,4,6,8), labels = c('Low','Medium', 'High'))
+wine$quality.bucket <- cut(wine$quality, c(1,4,6,8), 
+                           labels = c('Low','Medium', 'High'))
 summary(wine$quality.bucket)
 
 p2 <- ggplot(aes(x = quality.bucket), data = wine) +
@@ -106,76 +108,271 @@ grid.arrange(p1,p2)
 ### 2.2 Independnet Variables 
 
 
-For all the independent variables, I check all the statistical summaries and plot the histograms of to review their distribution as the same time visualize the mean (red line) and median (green line) in the plots.
+For all the independent variables, I check the statistical summary and plot the histogram one by one and correspondingly make some transformation if it's necessary. I also make boxplots to depict the outliers for better understanding the distribution. 
+
+
+```{r echo=FALSE, density}
+
+q1 <- ggplot(aes(x = density), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(density)), color = 'red') + 
+  geom_vline(aes(xintercept = median(density)), color = 'green')
+
+q2 <- ggplot(aes(x = density), data = wine) + 
+  geom_histogram(binwidth = 0.001) + 
+  geom_vline(aes(xintercept = mean(density)), color = 'red') + 
+  geom_vline(aes(xintercept = median(density)), color = 'green')
+
+q3 <- ggplot(wine, aes(x = 1, y = density)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q1,q2,q3, ncol = 3)
+
+summary(wine$density)
+```
+
+This histogram of density shows a normal distribution with the mean of 0.9967 and range of 0.9901 to 1.0037. The red line (mean) and green line (median) coincide that also indicates a normal distribute shape. Further, I change the binwidth for better visulization.
+
+
+```{r echo=FALSE, pH}
+
+q4 <- ggplot(aes(x = pH), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(pH)), color = 'red') + 
+  geom_vline(aes(xintercept = median(pH)), color = 'green')
+
+
+q5 <- ggplot(aes(x = pH), data = wine) + 
+  geom_histogram(binwidth = 0.1) + 
+  geom_vline(aes(xintercept = mean(pH)), color = 'red') + 
+  geom_vline(aes(xintercept = median(pH)), color = 'green')
+
+
+q6 <- ggplot(wine, aes(x = 1, y = pH)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q4,q5,q6, ncol = 3)
+
+summary(wine$pH)
+
+```
+
+This histogram of pH value also shows a normal distribution with the mean of 3.311 and range of 2.740 to 4.010. The red line (mean) and green line (median) coincide that also indicates a normal distribute shape. Further, I change the binwidth for better visulization.
+
+```{r echo=FALSE, alcohol}
+
+q7 <- ggplot(aes(x = alcohol), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + 
+  geom_vline(aes(xintercept = median(alcohol)), color = 'green')
+
+q8 <- ggplot(aes(x = alcohol), data = wine) + 
+  geom_histogram(binwidth = 0.5) + 
+  geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + 
+  geom_vline(aes(xintercept = median(alcohol)), color = 'green')
+
+q9 <- ggplot(wine, aes(x = 1, y = alcohol)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q7,q8,q9, ncol = 3)
+
+summary(wine$alcohol)
+
+```
+
+This histogram of alcohol shows a slightly positive skewness (right-skewness) in distribution. The range of alcohol content is between 14.90 and 8.40 while the mean is 10.42 and the median is 10.20. The boxplot aslo shows that a few values around 14 are the outliers. 
+
+ ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10
+
+```{r echo=FALSE, residual.sugar}
+q10 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + 
+  geom_vline(aes(xintercept = median(residual.sugar)), color = 'green')
+
+
+q11 <- ggplot(aes(x = residual.sugar), data = wine) + 
+  geom_histogram(binwidth = 0.05) + 
+  geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + 
+  geom_vline(aes(xintercept = median(residual.sugar)), color = 'green') +  
+  scale_x_log10()
+
+q12 <- ggplot(wine, aes(x = 1, y = residual.sugar)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q10,q11,q12, ncol = 3)
+
+summary(wine$residual.sugar)
+
+```
+
+The distribution of residual.sugar is a right-skewed distribution which has a long right tail. 
+
+
+
+```{r echo=FALSE, chlorides}
+
+q4 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
+  geom_vline(aes(xintercept = median(chlorides)), color = 'green')
+
+q5 <- ggplot(aes(x = chlorides), data = wine) + 
+  geom_histogram(binwidth = 0.05) + 
+  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
+  geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  
+  scale_x_log10()
+
+q6 <- ggplot(wine, aes(x = 1, y = chlorides)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q4,q5,q6, ncol = 3)
+
+summary(wine$chlorides)
+
+```
+
+```{r echo=FALSE, total.sulfur.dioxide}
+
+q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + 
+  geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green')
+
+q8 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + 
+  geom_histogram(binwidth = 0.1) + 
+  geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + 
+  geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green') + 
+  scale_x_log10()
+
+q9 <- ggplot(wine, aes(x = 1, y = total.sulfur.dioxide)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q7,q8,q9, ncol = 3)
+
+summary(wine$total.sulfur.dioxide)
+
+```
+
+```{r echo=FALSE, sulphates}
+
+q10 <- ggplot(aes(x = sulphates), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + 
+  geom_vline(aes(xintercept = median(sulphates)), color = 'green')
+
+q11 <- ggplot(aes(x = sulphates), data = wine) + 
+  geom_histogram(binwidth = 0.05) + 
+  geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + 
+  geom_vline(aes(xintercept = median(sulphates)), color = 'green') + 
+  scale_x_log10()
+
+q12 <- ggplot(wine, aes(x = 1, y = sulphates)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q10,q11,q12, ncol = 3)
+
+summary(wine$sulphates)
+```
+
+2. transform the variables ('citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
+
+```{r echo=FALSE, citric.acidity}
+
+q13 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(citric.acidity)), color = 'green')
+
+q14 <- ggplot(aes(x = citric.acidity), data = wine) + 
+  geom_histogram(binwidth = 0.05) + 
+  geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(citric.acidity)), color = 'green') + 
+  scale_x_sqrt()
+
+q15 <- ggplot(wine, aes(x = 1, y = citric.acidity)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q13,q14,q15, ncol = 3)
+
+summary(wine$citric.acidity)
+```
+
+```{r echo=FALSE, free.sulfur.dioxide}
+
+q16 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + 
+  geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green')
+
+q17 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + 
+  geom_histogram(binwidth = 0.01) + 
+  geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + 
+  geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') +
+  scale_x_sqrt()
+
+
+q18 <- ggplot(wine, aes(x = 1, y = free.sulfur.dioxide)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
+
+grid.arrange(q16,q17,q18, ncol = 3)
+
+summary(wine$free.sulfur.dioxide)
+```
+
 
 ```{r echo=FALSE, Distribution}
 
 summary(wine)
-geom_histogram()
-
-q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
-
-q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green')
-
-q3 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + geom_vline(aes(xintercept = median(citric.acidity)), color = 'green')
-
-q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + geom_vline(aes(xintercept = median(residual.sugar)), color = 'green')
-
-q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green')
-
-q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green')
-
-q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green')
-
-q8 <- ggplot(aes(x = density), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(density)), color = 'red') + geom_vline(aes(xintercept = median(density)), color = 'green')
-
-q9 <- ggplot(aes(x = pH), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(pH)), color = 'red') + geom_vline(aes(xintercept = median(pH)), color = 'green')
-
-q10 <- ggplot(aes(x = sulphates), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + geom_vline(aes(xintercept = median(sulphates)), color = 'green')
-
-q11 <- ggplot(aes(x = alcohol), data = wine) + geom_bar() + geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + geom_vline(aes(xintercept = median(alcohol)), color = 'green')
 
 
-grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,ncol = 3)
+q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
+
+q1 <- ggplot(aes(x = fixed.acidity), data = wine) + 
+  geom_histogram(binwidth = 1) + 
+  geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
+
+
+q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green')
+
+q2 <- ggplot(aes(x = volatile.acidity), data = wine) + 
+  geom_histogram(binwidth = 0.1) + 
+  geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + 
+  geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
+
+
+
+
+q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + 
+  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
+  geom_vline(aes(xintercept = median(chlorides)), color = 'green')
+
+q5 <- ggplot(aes(x = chlorides), data = wine) + 
+  geom_histogram(binwidth = 0.05) + 
+  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
+  geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  
+  scale_x_log10()
+
+
+
 
 ```
-From the plots and summaries above, we can see that distributions of the variables are varied. Many variables are over-dispersed with very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables (citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
 
-I also apply the transformation to the variables ('fixed.acidity', 'volatile.acidity', 'citric.acidity') but there's no significant change in the distribution, for that reason, I keep the original distribution status for these three variables. 
+
+From the plots and summaries above, we can see that distributions of the variables are varied. Many variables are over-dispersed with very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables ('citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
+
+I also apply the transformation to the variables ('fixed.acidity', 'volatile.acidity') but there's no significant change in the distribution, for that reason, I keep the original distribution status for these three variables. 
 
 Besides, no need to change in the distributions of three variables: 'density,' 'pH,' and 'alcohol.'
 
 In short, I trim the long tails for most variables by taking log base10 and sqrt at the same time adjust the binwidth of them for better visualization.
  
 
-```{r echo=FALSE, Transforming_Data}
-q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_histogram(binwidth = 1) + geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
-
-q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
-
-q3 <- ggplot(aes(x = citric.acidity), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + geom_vline(aes(xintercept = median(citric.acidity)), color = 'green') + scale_x_sqrt()
-
-q4 <- ggplot(aes(x = residual.sugar), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(residual.sugar)), color = 'red') + geom_vline(aes(xintercept = median(residual.sugar)), color = 'green') +  scale_x_log10()
-
-q5 <- ggplot(aes(x = chlorides), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  scale_x_log10()
-
-
-q6 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.01) + geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') +  scale_x_sqrt()
-
-q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green') + scale_x_log10()
-
-q8 <- ggplot(aes(x = density), data = wine) + geom_histogram(binwidth = 0.001) + geom_vline(aes(xintercept = mean(density)), color = 'red') + geom_vline(aes(xintercept = median(density)), color = 'green')
-
-q9 <- ggplot(aes(x = pH), data = wine) + geom_histogram(binwidth = 0.1) + geom_vline(aes(xintercept = mean(pH)), color = 'red') + geom_vline(aes(xintercept = median(pH)), color = 'green')
-
-q10 <- ggplot(aes(x = sulphates), data = wine) + geom_histogram(binwidth = 0.05) + geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + geom_vline(aes(xintercept = median(sulphates)), color = 'green') + scale_x_log10()
-
-q11 <- ggplot(aes(x = alcohol), data = wine) + geom_histogram(binwidth = 0.5) + geom_vline(aes(xintercept = mean(alcohol)), color = 'red') + geom_vline(aes(xintercept = median(alcohol)), color = 'green')
-
-grid.arrange(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11, ncol = 3)
-
-
-```
 
 ## Univariate Analysis
 
@@ -306,6 +503,11 @@ ggplot(aes(x = density, y = alcohol), data = wine) +
   scale_y_continuous(lim = c(min(wine$alcohol), quantile(wine$alcohol, 0.99))) +
   ggtitle('Quality by Alcohol and Density')
 
+ggplot(aes(x = density, y = alcohol, color = quality.bucket), data = wine) +
+  geom_point(alpha = 0.8, size = 1) +
+  geom_smooth(method = 'lm', se = FALSE, size = 1) +
+  scale_color_brewer(type = 'seq', guide = guide_legend(title = 'Quality'))
+
 ```
 
 ### 4.2 Residual.Sugar x Density x Quality
@@ -318,9 +520,13 @@ Similarly, the previous analysis shows that density positively correlated with r
 ggplot(aes(x = residual.sugar, y = density), data = wine) +
   geom_point(aes(color = quality.bucket), alpha = 0.2, size = 2) +
   stat_smooth(method = 'lm', color = 'blue') +
-  scale_x_continuous(lim = c(min(wine$residual.sugar), quantile(wine$residual.sugar, 0.90))) +
-  scale_y_continuous(lim = c(min(wine$density), quantile(wine$density, 0.99))) +
+  scale_x_continuous(lim = c(min(wine$residual.sugar), 
+                             quantile(wine$residual.sugar, 0.90))) +
+  scale_y_continuous(lim = c(min(wine$density), 
+                             quantile(wine$density, 0.99))) +
   ggtitle('Quality by Sugar and Density')
+
+
 
 ```
 
@@ -379,9 +585,12 @@ The second plot I chose indicates the positive relationship between alcohol and 
 ggplot(aes(x = density, y = alcohol), data = wine) +
   geom_point(aes(colour = quality.bucket), alpha = 0.5, size = 1.5) +
   stat_smooth(method = 'lm', color = 'purple') +
-  scale_x_continuous(lim = c(min(wine$density), quantile(wine$density, 0.99))) +
-  scale_y_continuous(lim = c(min(wine$alcohol), quantile(wine$alcohol, 0.99))) +
+  scale_x_continuous(lim = c(min(wine$density), 
+                             quantile(wine$density, 0.99))) +
+  scale_y_continuous(lim = c(min(wine$alcohol), 
+                             quantile(wine$alcohol, 0.99))) +
   ggtitle('Quality by Alcohol and Density')
+
 
 ```
 
