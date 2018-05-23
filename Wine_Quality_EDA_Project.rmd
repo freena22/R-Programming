@@ -81,7 +81,7 @@ tail(wine)
 
 ## 2. Univariate Plots Section
 
-### 2.1 Dependent Variable -- Quality
+###  Dependent Variable -- Quality
 
 From the structure of the dataset, we can see that all the variables are numerics except the quality. It's ok to keep this data type without changing it from integer to factor since I need to create a new variable called 'quality.bucket' to set three levels of wine quality: low/medium/high based on the actual distribution of quality (from 1 to 8).
 
@@ -105,11 +105,12 @@ grid.arrange(p1,p2)
 
 ```
 
-### 2.2 Independnet Variables 
+###  Independnet Variables 
 
 
 For all the independent variables, I check the statistical summary and plot the histogram one by one and correspondingly make some transformation if it's necessary. I also make boxplots to depict the outliers for better understanding the distribution. 
 
+#### 2.1 Density
 
 ```{r echo=FALSE, density}
 
@@ -133,6 +134,7 @@ summary(wine$density)
 
 This histogram of density shows a normal distribution with the mean of 0.9967 and range of 0.9901 to 1.0037. The red line (mean) and green line (median) coincide that also indicates a normal distribute shape. Further, I change the binwidth for better visulization.
 
+#### 2.2 pH
 
 ```{r echo=FALSE, pH}
 
@@ -157,7 +159,9 @@ summary(wine$pH)
 
 ```
 
-This histogram of pH value also shows a normal distribution with the mean of 3.311 and range of 2.740 to 4.010. The red line (mean) and green line (median) coincide that also indicates a normal distribute shape. Further, I change the binwidth for better visulization.
+This histogram of pH value shows a normal distribution with the mean of 3.311 and range of 2.740 to 4.010. The red line (mean) and green line (median) coincide that also indicates a normal distribute shape. Further, I change the binwidth for better visulization.
+
+#### 2.3 Alcohol
 
 ```{r echo=FALSE, alcohol}
 
@@ -182,7 +186,7 @@ summary(wine$alcohol)
 
 This histogram of alcohol shows a slightly positive skewness (right-skewness) in distribution. The range of alcohol content is between 14.90 and 8.40 while the mean is 10.42 and the median is 10.20. The boxplot aslo shows that a few values around 14 are the outliers. 
 
- ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10
+#### 2.4 Residual.Sugar
 
 ```{r echo=FALSE, residual.sugar}
 q10 <- ggplot(aes(x = residual.sugar), data = wine) + geom_bar() + 
@@ -206,67 +210,75 @@ summary(wine$residual.sugar)
 
 ```
 
-The distribution of residual.sugar is a right-skewed distribution which has a long right tail. 
+The distribution of residual.sugar is a right-skewed distribution which has a long right tail. To imporve that, I take the log base10 to transform the data scale and get a relatively better distribution. From the boxplot, it also confirms that lots of outliers are between 4 and 16, which is greater than the mean (2.539) and 3rd Quartile (2.600). 
 
-
+#### 2.5 Chlorides
 
 ```{r echo=FALSE, chlorides}
 
-q4 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + 
+q13 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
   geom_vline(aes(xintercept = median(chlorides)), color = 'green')
 
-q5 <- ggplot(aes(x = chlorides), data = wine) + 
+q14 <- ggplot(aes(x = chlorides), data = wine) + 
   geom_histogram(binwidth = 0.05) + 
   geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
   geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  
   scale_x_log10()
 
-q6 <- ggplot(wine, aes(x = 1, y = chlorides)) +
+q15 <- ggplot(wine, aes(x = 1, y = chlorides)) +
   geom_jitter(alpha = 0.1) +
   geom_boxplot(alpha = 0.2, color = 'red')
 
-grid.arrange(q4,q5,q6, ncol = 3)
+grid.arrange(q13,q14,q15, ncol = 3)
 
 summary(wine$chlorides)
 
 ```
 
+Since the distribution of chlorides is a right-skewed distribution, I also use the log base10 to transform the data scale and get a relatively better distribution. From the boxplot, it also confirms that lots of outliers (red dots) greater than the mean (0.08747) and 3rd Quartile (0.09000).
+
+#### 2.6 Total.Sulfur.Dioxide
+
 ```{r echo=FALSE, total.sulfur.dioxide}
 
-q7 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar() + 
+q16 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + 
   geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green')
 
-q8 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + 
+q17 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) + 
   geom_histogram(binwidth = 0.1) + 
   geom_vline(aes(xintercept = mean(total.sulfur.dioxide)), color = 'red') + 
   geom_vline(aes(xintercept = median(total.sulfur.dioxide)), color = 'green') + 
   scale_x_log10()
 
-q9 <- ggplot(wine, aes(x = 1, y = total.sulfur.dioxide)) +
+q18 <- ggplot(wine, aes(x = 1, y = total.sulfur.dioxide)) +
   geom_jitter(alpha = 0.1) +
   geom_boxplot(alpha = 0.2, color = 'red')
 
-grid.arrange(q7,q8,q9, ncol = 3)
+grid.arrange(q16,q17,q18, ncol = 3)
 
 summary(wine$total.sulfur.dioxide)
 
 ```
 
+The total.sulfur.dioxide holds a positive-skew distribution between 0.00600 to 0.28900 with the mean of 0.04647. I also use the log base10 to transform the data scale and get a relatively better distribution. From the boxplot, it shows that a few outliers (red dots) locate between 0.1 and 0.2. It is worth noting that there're two extreme outliers valued 0.25 - 0.30. 
+
+#### 2.7 Sulphates
+
 ```{r echo=FALSE, sulphates}
 
-q10 <- ggplot(aes(x = sulphates), data = wine) + geom_bar() + 
+q19 <- ggplot(aes(x = sulphates), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + 
   geom_vline(aes(xintercept = median(sulphates)), color = 'green')
 
-q11 <- ggplot(aes(x = sulphates), data = wine) + 
+q20 <- ggplot(aes(x = sulphates), data = wine) + 
   geom_histogram(binwidth = 0.05) + 
   geom_vline(aes(xintercept = mean(sulphates)), color = 'red') + 
   geom_vline(aes(xintercept = median(sulphates)), color = 'green') + 
   scale_x_log10()
 
-q12 <- ggplot(wine, aes(x = 1, y = sulphates)) +
+q21 <- ggplot(wine, aes(x = 1, y = sulphates)) +
   geom_jitter(alpha = 0.1) +
   geom_boxplot(alpha = 0.2, color = 'red')
 
@@ -275,104 +287,116 @@ grid.arrange(q10,q11,q12, ncol = 3)
 summary(wine$sulphates)
 ```
 
-2. transform the variables ('citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
+
+The distribution of sulphates is a right-skewed distribution which has a long right tail. To imporve that, I take the log base10 to transform the data scale and get a relatively better distribution. From the boxplot, it also confirms that lots of outliers are between 4 and 16, which is way greater than the mean (0.6581) and 3rd Quartile (0.7300).
+
+#### 2.8 Citric.Acidity
 
 ```{r echo=FALSE, citric.acidity}
 
-q13 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar() + 
+q22 <- ggplot(aes(x = citric.acidity), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(citric.acidity)), color = 'green')
 
-q14 <- ggplot(aes(x = citric.acidity), data = wine) + 
+q23 <- ggplot(aes(x = citric.acidity), data = wine) + 
   geom_histogram(binwidth = 0.05) + 
   geom_vline(aes(xintercept = mean(citric.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(citric.acidity)), color = 'green') + 
   scale_x_sqrt()
 
-q15 <- ggplot(wine, aes(x = 1, y = citric.acidity)) +
+q24 <- ggplot(wine, aes(x = 1, y = citric.acidity)) +
   geom_jitter(alpha = 0.1) +
   geom_boxplot(alpha = 0.2, color = 'red')
 
-grid.arrange(q13,q14,q15, ncol = 3)
+grid.arrange(q22,q23,q24, ncol = 3)
 
 summary(wine$citric.acidity)
 ```
+The distribution of citric.acidity has a multimodal distribution, ranging from 0 to 1 with the mean of 0.271. After taking the sqrt scale transformation, it's easily to see three peaks around 0.00, 0.25, and 0.50. The boxplot indicats few outliers greater than 0.75, while at the bottom of 0 and 0.50 lots of dots accumulate there.
+
+#### 2.9 Free.Sulfur.Dioxide
 
 ```{r echo=FALSE, free.sulfur.dioxide}
 
-q16 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + 
+q25 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + 
   geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green')
 
-q17 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + 
+q26 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) + 
   geom_histogram(binwidth = 0.01) + 
   geom_vline(aes(xintercept = mean(free.sulfur.dioxide)), color = 'red') + 
   geom_vline(aes(xintercept = median(free.sulfur.dioxide)), color = 'green') +
   scale_x_sqrt()
 
 
-q18 <- ggplot(wine, aes(x = 1, y = free.sulfur.dioxide)) +
+q27 <- ggplot(wine, aes(x = 1, y = free.sulfur.dioxide)) +
   geom_jitter(alpha = 0.1) +
   geom_boxplot(alpha = 0.2, color = 'red')
 
-grid.arrange(q16,q17,q18, ncol = 3)
+grid.arrange(q25,q26,q27, ncol = 3)
 
 summary(wine$free.sulfur.dioxide)
 ```
 
+Free.sulfur.dioxide has a right-skewed distribution between 0.00100 and 0.07200 with the mean of 0.01587. To imporve that, I take the log base10 to transform the data scale and get a relatively better distribution. From the transformed plot, I can see two peaks there around 0.0006 and 0.0026. The boxplot also confirms that a few outliers are between 0.04 and 0.07, which is way greater than the mean (0.01587) and 3rd Quartile (0.02100).
 
-```{r echo=FALSE, Distribution}
+#### 2.10 Fixed.Acidity
 
-summary(wine)
+```{r echo=FALSE, fixed.acidity}
 
-
-q1 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_bar() + 
+q28 <- ggplot(aes(x = fixed.acidity), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
 
-q1 <- ggplot(aes(x = fixed.acidity), data = wine) + 
+q29 <- ggplot(aes(x = fixed.acidity), data = wine) + 
   geom_histogram(binwidth = 1) + 
   geom_vline(aes(xintercept = mean(fixed.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(fixed.acidity)), color = 'green')
 
+q30 <- ggplot(wine, aes(x = 1, y = free.sulfur.dioxide)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
 
-q2 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_bar() + 
+grid.arrange(q28,q29,q30, ncol = 3)
+
+summary(wine$fixed.acidity)
+
+```
+
+This histogram of fixed.acidity shows a slightly positive skewness (right-skewness) in distribution, so I only change the binwidth size for better visulization. The range of alcohol content is between 4.60 and 15.90 while the mean is 8.32 and the median is 7.90. The boxplot aslo shows that a few values above 0.04 are the outliers. 
+
+#### 2.11 Volatile.Acidity
+
+```{r echo=FALSE, volatile.acidity}
+q31 <- ggplot(aes(x = volatile.acidity), data = wine) + geom_bar() + 
   geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green')
 
-q2 <- ggplot(aes(x = volatile.acidity), data = wine) + 
+q32 <- ggplot(aes(x = volatile.acidity), data = wine) + 
   geom_histogram(binwidth = 0.1) + 
   geom_vline(aes(xintercept = mean(volatile.acidity)), color = 'red') + 
   geom_vline(aes(xintercept = median(volatile.acidity)), color = 'green') 
 
+q33 <- ggplot(wine, aes(x = 1, y = free.sulfur.dioxide)) +
+  geom_jitter(alpha = 0.1) +
+  geom_boxplot(alpha = 0.2, color = 'red')
 
+grid.arrange(q31,q32,q33, ncol = 3)
 
-
-q5 <- ggplot(aes(x = chlorides), data = wine) + geom_bar() + 
-  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
-  geom_vline(aes(xintercept = median(chlorides)), color = 'green')
-
-q5 <- ggplot(aes(x = chlorides), data = wine) + 
-  geom_histogram(binwidth = 0.05) + 
-  geom_vline(aes(xintercept = mean(chlorides)), color = 'red') + 
-  geom_vline(aes(xintercept = median(chlorides)), color = 'green') +  
-  scale_x_log10()
-
-
-
+summary(wine$volatile.acidity)
 
 ```
 
+This histogram of volatile.acidity shows a nearly normal distribution with the mean of 0.5278 and range of 0.1200 to 1.5800. Also, I change the binwidth for better visulization. The red line (mean) and green line (median) are close together that also indicates a nearly normal distribute shape, while the boxplot reflects a few outliers above 0.04.
+
+#### 2.12 Short Summary
 
 From the plots and summaries above, we can see that distributions of the variables are varied. Many variables are over-dispersed with very long tails. Thus, I need to transform these values to short the tails. Dependent on different distributions, I transform the variables ('residual.sugar', 'chlorides', 'total.sulfur.dioxide', 'sulphates') by taking the log base10 and transform the variables ('citric.acidity', 'free.sulfur.dioxide') by taking the sqrt. 
 
-I also apply the transformation to the variables ('fixed.acidity', 'volatile.acidity') but there's no significant change in the distribution, for that reason, I keep the original distribution status for these three variables. 
+I also apply the transformation to the variables ('fixed.acidity', 'volatile.acidity') but there's no significant change in the distribution, for that reason, I keep the original distribution status for these three variables. Besides, no need to change in the distributions of three variables: 'density,' 'pH,' and 'alcohol.'
 
-Besides, no need to change in the distributions of three variables: 'density,' 'pH,' and 'alcohol.'
-
-In short, I trim the long tails for most variables by taking log base10 and sqrt at the same time adjust the binwidth of them for better visualization.
+In short, I trim the long tails for most variables by taking log base10 and sqrt,at the same time adjust the binwidth of them for better visualization, and finally check the outliers through boxplots.
  
-
 
 ## Univariate Analysis
 
@@ -436,6 +460,12 @@ with(wine, cor.test(quality, volatile.acidity, method = 'pearson'))
 
 ggplot(aes(y=alcohol, x=quality.bucket), data=wine) +
   geom_boxplot(aes(color = quality.bucket, fill=quality), alpha=0.7) +
+  geom_jitter(alpha = 0.1) +
+  stat_summary(fun.y = 'mean',
+               geom = 'point',
+               color = 'red',
+               shape = 8,
+               size = 4) +
   ggtitle("Quality vs Alcohol") +
   xlab("Quality") +
   ylab("Alcohol (%)")
@@ -453,6 +483,8 @@ ggplot(aes(y=volatile.acidity, x=quality.bucket), data=wine) +
   ylab("Volatile.acidity")
 
 ```
+
+
 ```{r echo=FALSE, Residual.Sugar_density}
 with(wine, cor.test(residual.sugar, density, method = 'pearson'))
 ggplot(aes(y=residual.sugar, x=density), data=wine) +
@@ -462,6 +494,8 @@ ggplot(aes(y=residual.sugar, x=density), data=wine) +
   xlab("Density") +
   ylab("Residual.Sugar")
 ```
+
+
 ```{r echo=FALSE, Alcohol_density}
 with(wine, cor.test(alcohol, density, method = 'pearson'))
 ggplot(aes(x=alcohol, y=density), data=wine) +
